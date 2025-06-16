@@ -3,7 +3,6 @@ const { format } = require('date-fns');
 const fs = require('fs');
 const path = require('path');
 
-// Função que gera o arquivo DOCX para o questionário
 function gerarQuestionario(respostas) {
   const nomeParticipante = respostas.nome || "Participante Anônimo";
   
@@ -11,21 +10,18 @@ function gerarQuestionario(respostas) {
   const senioridade = respostas.senioridade;
   const nivel = respostas.nivel;
   const cargo = funcao + " " + senioridade + " " + nivel;
-  const squad = respostas.squad || "Squad não especificado"; // Usar o valor de squad para criar diretórios
+  const squad = respostas.squad || "Squad não especificado";
   const dataFeedback = format(new Date(), 'dd-MM-yyyy');
   const dataImpressa = format(new Date(), 'dd/MM/yyyy HH:mm');
   const dataContratacao = format(respostas.dataContratacao, 'dd/MM/yyyy');
 
-  // Caminho base para salvar o arquivo
   const baseDir = path.join(__dirname, 'arquivos');
   
-  // Criando diretório da squad, se não existir
   const squadDir = path.join(baseDir, squad);
   if (!fs.existsSync(squadDir)) {
     fs.mkdirSync(squadDir, { recursive: true });
   }
 
-  // Criando o documento
   const doc = new Document({
     sections: [
       {
@@ -41,7 +37,7 @@ function gerarQuestionario(respostas) {
               }),
             ],
           }),
-          new Paragraph(""), // Espaço
+          new Paragraph(""),
           new Paragraph({
             alignment:'center',
             size: 36,
@@ -56,7 +52,7 @@ function gerarQuestionario(respostas) {
               }),
             ],
           }),
-          new Paragraph(""), // Espaço
+          new Paragraph(""),
 
           // Tópico 1 - Autoconhecimento e Identidade Profissional
           new Paragraph({
@@ -202,15 +198,12 @@ function gerarQuestionario(respostas) {
     ],
   });
 
-  // Gerando o nome do arquivo no formato: NomeDoParticipante yyyy-mm-dd.docx
   const fileName = `${nomeParticipante} - ${dataFeedback} - (Feedback 360).docx`;
-  const filePath = path.join(squadDir, fileName); // Salvar o arquivo dentro da pasta da squad
+  const filePath = path.join(squadDir, fileName);
 
-  // Retornando o buffer gerado pelo Packer
   return Packer.toBuffer(doc).then((buffer) => {
-    // Salvando o arquivo .docx no diretório específico da squad
     fs.writeFileSync(filePath, buffer);
-    return filePath;  // Retorna o caminho do arquivo gerado
+    return filePath;
   });
 }
 

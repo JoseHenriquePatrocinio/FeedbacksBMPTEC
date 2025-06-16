@@ -6,14 +6,11 @@
   <title>Página Inicial</title>
   <link rel="stylesheet" href="../css/styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <style>
-    /* Estilos adicionais */
-    
+  <style>  
   </style>
 </head>
 <body>
 
-  <!-- Barra Superior -->
   <header>
     <nav>
       <a href="/">🏠 Início</a>
@@ -22,12 +19,10 @@
     </nav>
   </header>
 
-  <!-- Título da Página -->
   <div class="index-container">
     <main>
       <h1>Feedback BMPTEC</h1>
 
-      <!-- Menu de opções -->
       <div>
         <a href="/compactar" id="baixar-zip" class="btn-menu">
           <i class="fa fa-file-archive"></i> Baixar arquivos compactados
@@ -37,14 +32,12 @@
         </button>
       </div>
 
-      <!-- Checkbox para ativar/desativar atualização automática -->
       <div class="config-atualizacao">
         <input type="checkbox" id="toggle-atualizacao" checked>
         <label for="toggle-atualizacao">Ativar atualização automática</label>
       </div>
 
       <p id="mensagem-atualizacao">🔄 Atualizando a página em <span id="contador">30</span> segundos...</p>
-      <!-- Grid de arquivos -->
       <table>
         <thead>
           <tr>
@@ -55,24 +48,20 @@
           </tr>
         </thead>
         <tbody id="arquivos-tabela">
-          <!-- Os arquivos serão inseridos aqui -->
         </tbody>
       </table>
     </main>
   </div>
 
-
-  <!-- Script para carregar os dados -->
   <script>
     let intervaloAtualizacao;
 
-    // Função para carregar os arquivos na tabela
     function carregarArquivos() {
-      fetch('/api/arquivos?nocache=' + new Date().getTime()) // Evita cache
+      fetch('/api/arquivos?nocache=' + new Date().getTime())
         .then(response => response.json())
         .then(arquivos => {
           const tabela = document.getElementById('arquivos-tabela');
-          tabela.innerHTML = ''; // Limpa a tabela
+          tabela.innerHTML = '';
 
           arquivos.forEach(arquivo => {
             const tr = document.createElement('tr');
@@ -91,7 +80,6 @@
             downloadLink.href = arquivo.downloadUrl;
             downloadLink.setAttribute('download', arquivo.nome);
 
-            // Ícone de download
             const downloadIcon = document.createElement('i');
             downloadIcon.classList.add('fas', 'fa-download');
             downloadLink.appendChild(downloadIcon);
@@ -107,7 +95,6 @@
         .catch(error => console.error('Erro ao carregar arquivos:', error));
     }
 
-    // Função para excluir arquivos
     document.getElementById('excluir-arquivos').addEventListener('click', () => {
       if (confirm('Tem certeza que deseja excluir todos os arquivos? Esta ação não pode ser desfeita.')) {
         fetch('/excluirArquivos', { method: 'DELETE' })
@@ -124,7 +111,6 @@
       }
     });
 
-    // Função para ativar/desativar a atualização automática
     function configurarAtualizacaoAutomatica() {
       const checkbox = document.getElementById('toggle-atualizacao');
       const mensagem = document.getElementById('mensagem-atualizacao');
@@ -149,10 +135,8 @@
       }
     }
 
-    // Listener para ativação/desativação da atualização
     document.getElementById('toggle-atualizacao').addEventListener('change', configurarAtualizacaoAutomatica);
 
-    // Inicia carregamento e atualização automática ao carregar a página
     window.onload = () => {
       carregarArquivos();
       configurarAtualizacaoAutomatica();
