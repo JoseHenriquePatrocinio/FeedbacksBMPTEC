@@ -6,17 +6,13 @@ function listarArquivosGerados(pastaArquivos) {
   return new Promise((resolve, reject) => {
     const arquivos = [];
 
-    // Lê a pasta principal que contém as subpastas de squad
     fs.readdir(pastaArquivos, { withFileTypes: true }, (err, directories) => {
       if (err) {
         return reject('Erro ao ler a pasta principal');
       }
-
-      // Filtra apenas as pastas dentro da pasta principal (representam os squads)
       directories.filter(dir => dir.isDirectory()).forEach(squadDir => {
-        const squadPath = path.join(pastaArquivos, squadDir.name); // Caminho para a pasta do squad
+        const squadPath = path.join(pastaArquivos, squadDir.name);
 
-        // Lê os arquivos dentro de cada pasta de squad
         fs.readdir(squadPath, (err, files) => {
           if (err) {
             return reject(`Erro ao ler a pasta do squad ${squadDir.name}`);
@@ -26,19 +22,16 @@ function listarArquivosGerados(pastaArquivos) {
             
             const filePath = path.join(squadPath, file);
             const stats = fs.statSync(filePath);
-            const dateCreated = stats.birthtime.toLocaleDateString('pt-BR', {timeZone: 'UTC'}); // Data completa do arquivo
+            const dateCreated = stats.birthtime.toLocaleDateString('pt-BR', {timeZone: 'UTC'});
             
-
-            // Adiciona os arquivos à lista sem validar a data de criação
             arquivos.push({
               nome: file,
-              squad: squadDir.name, // Nome do squad (pasta)
-              dataHora: dateCreated, // Data e hora formatada
-              downloadUrl: `/arquivos/${squadDir.name}/${file}` // Caminho para o arquivo para download
+              squad: squadDir.name,
+              dataHora: dateCreated,
+              downloadUrl: `/arquivos/${squadDir.name}/${file}`
             });
           });
 
-          // Resolve a promessa com os arquivos encontrados depois de iterar todos os squads
           if (squadDir === directories[directories.length - 1]) {
             resolve(arquivos);
           }
